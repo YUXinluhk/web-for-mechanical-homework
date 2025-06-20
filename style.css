@@ -66,3 +66,25 @@ button:hover {
     color: red;
     font-weight: bold;
 }
+
+#stats-container {
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid #eee;
+}
+
+#stats-container h2 {
+    margin-bottom: 15px;
+    color: #333;
+}
+
+#stats-container p {
+    margin: 8px 0;
+    font-size: 1em;
+    color: #555;
+}
+
+#stats-container span {
+    font-weight: bold;
+    color: #007bff; /* Using the button color for emphasis, can be changed */
+}

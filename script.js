@@ -5,12 +5,47 @@ document.addEventListener('DOMContentLoaded', () => {
     const nextProblemButton = document.getElementById('next-problem-button');
     const feedbackTextElement = document.getElementById('feedback-text');
 
+    // DOM elements for stats and timer
+    const correctCountElement = document.getElementById('correct-count');
+    const incorrectCountElement = document.getElementById('incorrect-count');
+    const streakCountElement = document.getElementById('streak-count');
+    const timerDisplayElement = document.getElementById('timer-display');
+
     let currentProblem = {
         num1: 0,
         num2: 0,
         operator: '+',
         answer: 0
     };
+
+    // Statistics variables
+    let correctCount = 0;
+    let incorrectCount = 0;
+    let currentStreak = 0;
+
+    // Timer variables
+    let timerInterval;
+    let secondsElapsed = 0;
+
+    function updateStatsDisplay() {
+        correctCountElement.textContent = correctCount;
+        incorrectCountElement.textContent = incorrectCount;
+        streakCountElement.textContent = currentStreak;
+    }
+
+    function startTimer() {
+        stopTimer(); // Clear any existing timer
+        secondsElapsed = 0;
+        timerDisplayElement.textContent = `${secondsElapsed}s`;
+        timerInterval = setInterval(() => {
+            secondsElapsed++;
+            timerDisplayElement.textContent = `${secondsElapsed}s`;
+        }, 1000);
+    }
+
+    function stopTimer() {
+        clearInterval(timerInterval);
+    }
 
     function generateProblem() {
         const num1 = Math.floor(Math.random() * 10) + 1; // Numbers between 1 and 10
@@ -41,6 +76,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function checkAnswer() {
+        stopTimer(); // Stop timer when an answer is submitted
         const userAnswer = parseInt(answerInputElement.value, 10);
 
         feedbackTextElement.classList.remove('correct', 'incorrect'); // Reset classes
@@ -48,16 +84,22 @@ document.addEventListener('DOMContentLoaded', () => {
         if (isNaN(userAnswer)) {
             feedbackTextElement.textContent = "Please enter a valid number.";
             feedbackTextElement.className = 'incorrect';
+            // We don't update game stats for invalid input, but we could if desired
             return;
         }
 
         if (userAnswer === currentProblem.answer) {
             feedbackTextElement.textContent = "Correct!";
             feedbackTextElement.className = 'correct';
+            correctCount++;
+            currentStreak++;
         } else {
             feedbackTextElement.textContent = `Incorrect. The answer was ${currentProblem.answer}. Try the next one!`;
             feedbackTextElement.className = 'incorrect';
+            incorrectCount++;
+            currentStreak = 0;
         }
+        updateStatsDisplay();
     }
 
     function nextProblem() {
@@ -66,6 +108,8 @@ document.addEventListener('DOMContentLoaded', () => {
         feedbackTextElement.textContent = '';
         feedbackTextElement.className = ''; // Clear classes
         answerInputElement.focus();
+        updateStatsDisplay(); // Update stats display (e.g., if streak was reset but not from a wrong answer)
+        startTimer(); // Start timer for the new problem
     }
 
     // Event Listeners
